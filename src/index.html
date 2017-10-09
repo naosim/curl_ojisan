@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="css/skyblue.css">
+<style>
+.no_checked {
+  opacity: 0.5;
+}
+</style>
+
+<h1>CURLおじさんファクトリー</h1>
+<div id="app">
+  <code>{{command}}</code>
+  <div>
+    <h3>URL</h3>
+    <input type="text" class="form-control" v-model="url"></input>
+  </div>
+
+  <div v-for="item in input" v-bind:class="{no_checked:!item.enable}">
+    <h3><label><input type="checkbox" v-model="item.enable"></input>{{item.title}}</label></h3>
+    <div>
+      <textarea  class="form-control" v-if="item.is_array" v-model="item.value"></textarea>
+      <input type="text" class="form-control" v-else v-show="!item.is_flag" v-model="item.value"></input>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/vue"></script>
+<script>
+var data = {
+  url: 'http://localhost:8080',
+  post_data_text: '',
+  input:[
+    {
+      title: 'POST DATA',
+      type: 'data',
+      key: '-d',
+      value:'',
+      enable: false,
+      is_array: true
+    },
+    {
+      title: 'SSLを無視する',
+      type: 'insecure',
+      key: '-k',
+      value:'',
+      enable: false,
+      is_flag: true
+    },
+    {
+      title: 'リクエストメソッドを指定する',
+      type: 'method',
+      key: '-X',
+      value:'POST',
+      enable: false
+    },
+    {
+      title: 'PROXYを指定する',
+      type: 'proxy',
+      key: '-x',
+      value:'',
+      enable: false
+    }
+  ],
+  message: 'Hello Vue!'
+}
+
+var createOptionText = () => {
+  return data.input
+    .filter(v => v.enable)
+    .map(v => {
+      if(v.is_array) {
+        return v.value.trim().split('\n').map(p => `${v.key} "${p}"`).join(' ');
+      } else if(v.is_flag) {
+        return `${v.key}`;
+      } else {
+        return `${v.key} "${v.value}"`;
+      }
+
+    })
+    .join(' ');
+}
+
+var app = new Vue({
+  el: '#app',
+  data: data,
+  computed: {
+    // 算出 getter 関数
+    command: function () {
+      var options = createOptionText();
+      return `curl ${options} ${data.url}`;
+    }
+  }
+})
+</script>
