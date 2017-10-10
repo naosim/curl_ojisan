@@ -37,7 +37,7 @@ input[type="checkbox"] {
 <script>
 var data = create();
 
-var createOptionText = () => {
+var createOptionText = (data) => {
   return data.input
     .filter(v => v.enable)
     .map(v => {
@@ -60,7 +60,7 @@ var app = new Vue({
   data: data,
   computed: {
     command: function () {
-      var options = createOptionText();
+      var options = createOptionText(data);
       return `curl ${options} ${data.url}`;
     }
   }
