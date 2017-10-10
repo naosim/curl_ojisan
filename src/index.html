@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <link rel="stylesheet" href="css/skyblue.css">
 <style>
+.result {
+  margin-bottom: 0.5em;
+}
 .no_checked {
   opacity: 0.5;
+}
+input[type="checkbox"] {
+  vertical-align: middle;
 }
 </style>
 
 <h1>CURLおじさんファクトリー</h1>
 <div id="app">
-  <code>{{command}}</code>
+  <div class="result"><code>{{command}}</code></div>
   <div>
     <h3>URL</h3>
     <input type="text" class="form-control" v-model="url"></input>
