@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <link rel="stylesheet" href="css/skyblue.css">
 <style>
+html {
+  margin: 24px;
+}
 .result {
   margin-bottom: 0.5em;
 }
@@ -13,7 +16,7 @@ input[type="checkbox"] {
 </style>
 <title>CURLおじさんファクトリー</title>
 <h1>CURLおじさんファクトリー</h1>
-<div id="app">
+<div id="app" style="visibility:hidden">
   <div class="result"><code>{{command}}</code></div>
   <div>
     <h3>URL</h3>
@@ -30,50 +33,17 @@ input[type="checkbox"] {
 </div>
 
 <script src="https://unpkg.com/vue"></script>
+<script src="./js/curl_define.js"></script>
 <script>
-var data = {
-  url: 'http://localhost:8080',
-  post_data_text: '',
-  input:[
-    {
-      title: 'POST DATA',
-      type: 'data',
-      key: '-d',
-      value:'',
-      enable: false,
-      is_array: true
-    },
-    {
-      title: 'SSLを無視する',
-      type: 'insecure',
-      key: '-k',
-      value:'',
-      enable: false,
-      is_flag: true
-    },
-    {
-      title: 'リクエストメソッドを指定する',
-      type: 'method',
-      key: '-X',
-      value:'POST',
-      enable: false
-    },
-    {
-      title: 'PROXYを指定する',
-      type: 'proxy',
-      key: '-x',
-      value:'',
-      enable: false
-    }
-  ],
-  message: 'Hello Vue!'
-}
+var data = create();
 
 var createOptionText = () => {
   return data.input
     .filter(v => v.enable)
     .map(v => {
-      if(v.is_array) {
+      if(v.create) {
+        return v.create(v);
+      } else if(v.is_array) {
         return v.value.trim().split('\n').map(p => `${v.key} "${p}"`).join(' ');
       } else if(v.is_flag) {
         return `${v.key}`;
@@ -89,11 +59,12 @@ var app = new Vue({
   el: '#app',
   data: data,
   computed: {
-    // 算出 getter 関数
     command: function () {
       var options = createOptionText();
       return `curl ${options} ${data.url}`;
     }
   }
 })
+
+document.querySelector('#app').style = '';// show
 </script>
